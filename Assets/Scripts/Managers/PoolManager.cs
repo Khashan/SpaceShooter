@@ -92,6 +92,13 @@ public class PoolManager : Singleton<PoolManager>
         return pooledObject;
     }
 
+    //Use a Pooled Object from a specific pool and return a Component <T> 
+    public T UseObjectFromPool<T>(GameObject a_Prefab, Vector3 a_Position, Quaternion a_Rotation)
+    {
+        GameObject pooledObject = UseObjectFromPool(a_Prefab, a_Position, a_Rotation);
+        return pooledObject.GetComponent<T>();
+    }
+
     //Get the first inactive poolObject found
     private GameObject GetObjectFromPool(GameObject a_Prefab)
     {
