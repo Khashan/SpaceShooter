@@ -5,10 +5,11 @@ public class Bullets : PooledObject
     private int m_BulletDamage = 0;
     private float m_MoveSpeed = 0f;
 
-    private void BulletInit(int aBulletDamage, float aMoveSpeed)
+    private void BulletInit(int aBulletDamage, float aMoveSpeed, Quaternion aBulletDirection)
     {
         m_BulletDamage = aBulletDamage;
         m_MoveSpeed = aMoveSpeed;
+        transform.rotation = aBulletDirection;
     }
 
     private void Update()
