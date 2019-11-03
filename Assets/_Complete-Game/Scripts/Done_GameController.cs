@@ -82,4 +82,15 @@ public class Done_GameController : MonoBehaviour
         gameOverText.text = "Game Over!";
         gameOver = true;
     }
+
+    // private void OnTriggerEnter(Collider aCol)
+    // {
+    //     Destroy(this);
+	// 	if(aCol != null)
+	// 	{
+	// 		Destroy(gameObject);
+
+	// 	}
+
+    // }
 }

@@ -9,4 +9,14 @@ public class Done_RandomRotator : MonoBehaviour
 	{
 		GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble;
 	}
+
+	// private void OnTriggerEnter(Collider aCol)
+    // {
+    //     Destroy(this);
+	// 	if(aCol != null)
+	// 	{
+	// 		Destroy(gameObject);
+
+	// 	}
+    // }
 }

@@ -12,7 +12,7 @@ public class MenuController : MonoBehaviour
     private GameObject m_SlotThree;
 
 
-
+    
 
 
 
@@ -26,6 +26,11 @@ public class MenuController : MonoBehaviour
         if(Input.GetKey(KeyCode.D))
         {
             
+        }
+
+        if(Input.GetKey(KeyCode.KeypadEnter))
+        {
+            LevelManager.Instance.ChangeLevel("Done_Main",true,-1);
         }
     }
 }
