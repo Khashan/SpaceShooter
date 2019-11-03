@@ -37,10 +37,22 @@ public class Done_DestroyByContact : MonoBehaviour
 		{
 			Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
 			gameController.GameOver();
+			Destroy (other.gameObject);
+			
 		}
 		
+		if(other.tag == "Destroy")
+		{
+			Destroy(gameObject);
+			Destroy(this);
+			Debug.Log("Enter Here");
+		}
 		gameController.AddScore(scoreValue);
-		Destroy (other.gameObject);
 		Destroy (gameObject);
+		
+
+	
 	}
+
+
 }

@@ -9,4 +9,13 @@ public class Done_Mover : MonoBehaviour
 	{
 		GetComponent<Rigidbody>().velocity = transform.forward * speed;
 	}
+
+	private void OnTriggerEnter(Collider aCol)
+    {
+        if(aCol.tag == "Destroy")
+            {
+                Destroy(gameObject);
+                Destroy(this);
+            }
+    }
 }

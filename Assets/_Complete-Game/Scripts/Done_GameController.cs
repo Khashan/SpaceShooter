@@ -83,14 +83,12 @@ public class Done_GameController : MonoBehaviour
         gameOver = true;
     }
 
-    // private void OnTriggerEnter(Collider aCol)
-    // {
-    //     Destroy(this);
-	// 	if(aCol != null)
-	// 	{
-	// 		Destroy(gameObject);
-
-	// 	}
-
-    // }
+    private void OnTriggerEnter(Collider aCol)
+    {
+        if(aCol.tag == "Destroy")
+            {
+                Destroy(gameObject);
+                Destroy(this);
+            }
+    }
 }
