@@ -2,9 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class MainMenu : MonoBehaviour
 {
-    public void StartButton()
+    
+    public void SinglePlayer()
+    {
+        GameManager.Instance.PlayerCount = 1;       
+        LevelManager.Instance.ChangeLevel("SelectionMenu",true,-1);
+    }
+
+    public void MultiPlayer()
+    {
+        GameManager.Instance.PlayerCount = 2;
+        LevelManager.Instance.ChangeLevel("SelectionMenu",true,-1);
+    }
+
+    public void ExitGame()
     {
         LevelManager.Instance.ChangeLevel("SelectionMenu",true,-1);
     }

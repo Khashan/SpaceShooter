@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    private List<int> m_Idplayer = new List<int>();
+    private int m_PlayerCount;
+    public int PlayerCount
+    {
+        get {return m_PlayerCount;}  
+        set { m_PlayerCount = value; }   
+    }
 }

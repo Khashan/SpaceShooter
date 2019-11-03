@@ -11,13 +11,18 @@ public class MenuController : MonoBehaviour
     [SerializeField]
     private GameObject m_SlotThree;
 
+    private int m_Players;
 
+
+    private void Start()
+    {
+        m_Players = GameManager.Instance.PlayerCount;
+        Debug.Log("Nombre de joueurs" + m_Players);
+    }
     
-
-
-
     private void Update()
     {
+
         if(Input.GetKey(KeyCode.A))
         {
 
