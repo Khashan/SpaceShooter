@@ -6,6 +6,7 @@ public class TesterPlayer : MonoBehaviour, IDamageable
 {
     public void DamageReceived(int aDamageReceived)
     {
+        
     }
 
     public void HealReceived(int aHealReceived)
