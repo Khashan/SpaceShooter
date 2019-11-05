@@ -68,7 +68,7 @@ public class SelectionShip : MonoBehaviour
         }
         else
         {
-            m_Direction = (int)Input.GetAxisRaw("Horizontal");
+            m_Direction = (int)Input.GetAxisRaw("HorizontalPlayerOne");
 
             if (m_Direction != 0)
             {
@@ -137,12 +137,12 @@ public class SelectionShip : MonoBehaviour
         {   
             Debug.Log(LayerMask.GetMask()+ "ShipBase"); 
 
-            if(Input.GetKeyDown(KeyCode.KeypadEnter))  
+            if(Input.GetKeyDown(KeyCode.Alpha1))  
             {
-                GameObject shipBase = Instantiate(m_Ships[0]);
+                GameObject shipBase = m_Ships[0];
                 GameManager.Instance.ListShipSelect.Add(shipBase);
 
-                LevelManager.Instance.ChangeLevel("Done_Main",true,-1);
+                LevelManager.Instance.ChangeLevel("Game",true,-1);
             }
         }
         else if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipUpgrade")))
