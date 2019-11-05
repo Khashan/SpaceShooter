@@ -8,7 +8,7 @@ using UnityEngine;
     Make so if there's an empy space to the direction the player wants -> Do not rotate or Rotate 2x
  */
 
-public class TestSelectorBehaviourFUCKYOUJO : MonoBehaviour
+public class SelectionShip : MonoBehaviour
 {
     [SerializeField]
     private List<GameObject> m_Ships = new List<GameObject>();
@@ -29,8 +29,23 @@ public class TestSelectorBehaviourFUCKYOUJO : MonoBehaviour
     private int m_Direction;
 
 
+    //Camera for selection
+    [SerializeField]
+    private float m_LengthRaycast = 5.5f;
+  
+    private Camera m_Camera;
+    private RaycastHit m_Hit;
+
+    private int m_Players;
+
+    
+
+
     private void Start()
     {
+        m_Players = GameManager.Instance.PlayerCount;
+        m_Camera = Camera.main;
+
         for (int i = 0; i < m_Ships.Count; i++)
         {
             m_ShipsClock.Add(m_Ships[i].transform, i * 15);
@@ -53,13 +68,19 @@ public class TestSelectorBehaviourFUCKYOUJO : MonoBehaviour
         }
         else
         {
-            m_Direction = (int)Input.GetAxisRaw("Horizontal");
+            m_Direction = (int)Input.GetAxisRaw("HorizontalPlayerOne");
 
             if (m_Direction != 0)
             {
                 GetNextPosition();
             }
         }
+
+        if(m_Players == 1)
+        {
+            GetShipSelection();
+        }
+        
     }
 
     private void MoveShipSlot(KeyValuePair<Transform, float> aShip)
@@ -108,4 +129,42 @@ public class TestSelectorBehaviourFUCKYOUJO : MonoBehaviour
             m_ShipsClock[shipTransform] = time;
         }
     }
+
+    private bool GetShipSelection()
+    {
+
+        if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipBase")))
+        {   
+            Debug.Log(LayerMask.GetMask()+ "ShipBase"); 
+
+            if(Input.GetKeyDown(KeyCode.Alpha1))  
+            {
+                GameObject shipBase = m_Ships[0];
+                GameManager.Instance.ListShipSelect.Add(shipBase);
+
+                LevelManager.Instance.ChangeLevel("Game",true,-1);
+            }
+        }
+        else if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipUpgrade")))
+        {   
+            Debug.Log(LayerMask.GetMask() + "ShipUpgrade");
+            
+        }
+        else if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipLock")))
+        {   
+            Debug.Log(LayerMask.GetMask() + "ShipLock");        
+        }
+
+            // GameObject shipBase = Instantiate(m_Ships[0]);
+            // GameManager.Instance.ListShipSelect.Add(shipBase);
+            // Debug.Log(shipBase);
+            // Debug.Log("Toutch something");
+            
+            
+     
+
+
+        return true;
+    }
+
 }

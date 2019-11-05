@@ -6,7 +6,9 @@ using UnityEngine;
 public class PlayerData : ScriptableObject
 {
     [SerializeField]
-    private int m_Hp;
+    private int m_MaxHp;
+    [SerializeField]
+    private int m_MinHp;
     [SerializeField]
     private float m_Speed;
     [SerializeField]
@@ -15,12 +17,24 @@ public class PlayerData : ScriptableObject
     private int m_DamageBullet;
     [SerializeField]
     private float m_BulletSpeed;
+    [SerializeField]
+    private float m_ShootTimer;
     
 
-    public int GetHp()
+    public int GetMaxHp()
     {
-        return m_Hp;
+        return m_MaxHp;
     }
+
+    public float GetShootTimer()
+    {
+        return m_ShootTimer;
+    }
+    public int GetMinHp()
+    {
+        return m_MinHp;
+    }
+
     public float GetSpeed()
     {
         return m_Speed;
