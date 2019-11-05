@@ -6,6 +6,8 @@ public class GameSpawnPlayers : MonoBehaviour
 {
     private void Start()
     {
-        Instantiate(GameManager.Instance.ListShipSelect[0]);
+        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[0]);
+        Debug.Log(GameManager.Instance.ListShipSelect[0]);
+        refship.transform.position = new Vector3(0,0,0);
     }
 }
