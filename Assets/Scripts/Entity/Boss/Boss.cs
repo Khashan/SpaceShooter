@@ -17,6 +17,8 @@ public class Boss : MonoBehaviour, IDamageable
 
     [SerializeField]
     private GameObject m_BulletPrefab;
+    [SerializeField]
+    private AudioClip m_AutoAttackAudio;
 
     [SerializeField]
     private List<BossPhase> m_Phases = new List<BossPhase>();
@@ -83,8 +85,7 @@ public class Boss : MonoBehaviour, IDamageable
         {
             if (m_CurrentAbilityTime <= 0f)
             {
-                m_CurrentAbilityTime = m_AbilityRate;
-                m_Phases[m_CurrentPhase].m_AbilityCast.CastAbility(transform);
+                AbilityAttack();
             }
             else
             {
@@ -95,8 +96,16 @@ public class Boss : MonoBehaviour, IDamageable
 
     private void AutoAttack()
     {
+        AudioManager.Instance.PlaySFX(m_AutoAttackAudio, transform.position);
         Bullets projectile = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab, transform.position, transform.rotation);
         projectile.BulletInit(m_BulletDamage, m_BulletSpeed);
+    }
+
+    private void AbilityAttack()
+    {
+        m_CurrentAttackTime = m_AttackRate;
+        m_CurrentAbilityTime = m_AbilityRate;
+        StartCoroutine(m_Phases[m_CurrentPhase].m_AbilityCast.CastAbility(transform));
     }
 
     private void ChangeBossStage()
@@ -133,7 +142,6 @@ public class Boss : MonoBehaviour, IDamageable
             else if (m_CurrentHealth <= endPhaseHealth)
             {
                 ChangeBossStage();
-                m_CurrentPhase++;
                 m_CurrentHealth = m_Phases[m_CurrentPhase].m_StartPhaseHealth;
             }
         }
