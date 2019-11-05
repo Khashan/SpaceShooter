@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private int m_Damage;
     private float m_BulletSpeed;
+    /* [SerializeField]
+    private AudioClip m_SoundBullet;*/
 
     [SerializeField]
     private GameObject m_BulletPrefab;
@@ -67,6 +69,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         {
             Bullets pooledBullet = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab,transform.position, transform.rotation);
             pooledBullet.BulletInit(m_Damage,m_BulletSpeed);
+            //AudioManager FxBullet = AudioManager.Instance.PlaySFX<SFXAudio>(m_SoundBullet,transform.position);
         }
     }
     private void SetTilt()
