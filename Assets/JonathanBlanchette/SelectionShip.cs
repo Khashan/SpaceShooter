@@ -142,11 +142,8 @@ public class SelectionShip : MonoBehaviour
             {
                 /*
                     Bad m_Ships should be a another script
-                    EX: DisplayShip which contains in its member variable ScriptableObject Ship
-
-                    ScritpableObject Script should have a PlayerPrefab (With the correct Model)
-
-                    Add the PlayerPrefab to the GameManger List (ListShipSelect);
+                    EX: DisplayShip which contains in its member variable GameObject PrefabShip
+                    Add the PrefabShip to the GameManger List (ListShipSelect);
                  */
                 GameObject shipBase = m_Ships[0];
                 GameManager.Instance.ListShipSelect.Add(shipBase);
