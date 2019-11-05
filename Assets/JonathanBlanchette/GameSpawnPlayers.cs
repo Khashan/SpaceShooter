@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class GameSpawnPlayers : MonoBehaviour
 {
+    [SerializeField]
+    [Range(0, 1)]
+    private int m_IdPlayerToSpawn;
+
     private void Start()
     {
-        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[0]);
-        Debug.Log(GameManager.Instance.ListShipSelect[0]);
-        refship.transform.position = new Vector3(0,0,0);
+        if (m_IdPlayerToSpawn >= GameManager.Instance.ListShipSelect.Count)
+        {
+            return;
+        }
+
+        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[m_IdPlayerToSpawn]);
+        refship.transform.position = transform.position;
     }
 }

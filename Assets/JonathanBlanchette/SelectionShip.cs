@@ -11,6 +11,7 @@ using UnityEngine;
 public class SelectionShip : MonoBehaviour
 {
     [SerializeField]
+    //Shouldnt be GameObject but another script which the ships owns
     private List<GameObject> m_Ships = new List<GameObject>();
 
     [SerializeField]
@@ -32,13 +33,13 @@ public class SelectionShip : MonoBehaviour
     //Camera for selection
     [SerializeField]
     private float m_LengthRaycast = 5.5f;
-  
+
     private Camera m_Camera;
     private RaycastHit m_Hit;
 
     private int m_Players;
 
-    
+
 
 
     private void Start()
@@ -76,11 +77,11 @@ public class SelectionShip : MonoBehaviour
             }
         }
 
-        if(m_Players == 1)
+        if (m_Players == 1)
         {
             GetShipSelection();
         }
-        
+
     }
 
     private void MoveShipSlot(KeyValuePair<Transform, float> aShip)
@@ -133,35 +134,43 @@ public class SelectionShip : MonoBehaviour
     private bool GetShipSelection()
     {
 
-        if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipBase")))
-        {   
-            Debug.Log(LayerMask.GetMask()+ "ShipBase"); 
+        if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipBase")))
+        {
+            Debug.Log(LayerMask.GetMask() + "ShipBase");
 
-            if(Input.GetKeyDown(KeyCode.Alpha1))  
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
+                /*
+                    Bad m_Ships should be a another script
+                    EX: DisplayShip which contains in its member variable ScriptableObject Ship
+
+                    ScritpableObject Script should have a PlayerPrefab (With the correct Model)
+
+                    Add the PlayerPrefab to the GameManger List (ListShipSelect);
+                 */
                 GameObject shipBase = m_Ships[0];
                 GameManager.Instance.ListShipSelect.Add(shipBase);
 
-                LevelManager.Instance.ChangeLevel("Game",true,-1);
+                LevelManager.Instance.ChangeLevel("Game", true, -1);
             }
         }
-        else if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipUpgrade")))
-        {   
+        else if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipUpgrade")))
+        {
             Debug.Log(LayerMask.GetMask() + "ShipUpgrade");
-            
+
         }
-        else if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipLock")))
-        {   
-            Debug.Log(LayerMask.GetMask() + "ShipLock");        
+        else if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipLock")))
+        {
+            Debug.Log(LayerMask.GetMask() + "ShipLock");
         }
 
-            // GameObject shipBase = Instantiate(m_Ships[0]);
-            // GameManager.Instance.ListShipSelect.Add(shipBase);
-            // Debug.Log(shipBase);
-            // Debug.Log("Toutch something");
-            
-            
-     
+        // GameObject shipBase = Instantiate(m_Ships[0]);
+        // GameManager.Instance.ListShipSelect.Add(shipBase);
+        // Debug.Log(shipBase);
+        // Debug.Log("Toutch something");
+
+
+
 
 
         return true;
