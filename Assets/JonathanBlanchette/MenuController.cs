@@ -23,16 +23,6 @@ public class MenuController : MonoBehaviour
     private void Update()
     {
 
-        if(Input.GetKey(KeyCode.A))
-        {
-
-        }
-
-        if(Input.GetKey(KeyCode.D))
-        {
-            
-        }
-
         if(Input.GetKey(KeyCode.KeypadEnter))
         {
             LevelManager.Instance.ChangeLevel("Done_Main",true,-1);

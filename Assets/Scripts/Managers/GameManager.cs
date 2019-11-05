@@ -10,4 +10,11 @@ public class GameManager : Singleton<GameManager>
         get {return m_PlayerCount;}  
         set { m_PlayerCount = value; }   
     }
+
+    private List<GameObject> m_ListShipSelect = new List<GameObject>();
+    public List<GameObject> ListShipSelect
+    {
+        get { return m_ListShipSelect; }
+        set { m_ListShipSelect = value; }
+    }
 }
