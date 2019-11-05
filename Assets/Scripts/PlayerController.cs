@@ -9,15 +9,22 @@ public enum PlayerID
 }
 public class PlayerController : MonoBehaviour, IDamageable
 {
-    private int m_Hp;
+    private int m_CurrentHp;
+    private int m_MaxHp;
+    private int m_MinHp;
     private float m_Speed;
     private float m_Tilt;
+    private float m_ShootTimer;
 
+    private float m_CurrentTime;
+    [SerializeField]
+    private PlayerID m_PlayerID;
     private int m_Damage;
     private float m_BulletSpeed;
-    /* [SerializeField]
-    private AudioClip m_SoundBullet;*/
+    [SerializeField]
+    private AudioClip m_SoundBullet;
 
+    //private AudioManager
     [SerializeField]
     private GameObject m_BulletPrefab;
 
@@ -31,6 +38,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private Vector3 m_MoveDir = new Vector3();
 
+    private bool m_CanShoot=true;
 
     private void Awake()
     {
@@ -39,11 +47,18 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void SetupData()
     {
-        m_Hp =  m_Data.GetHp();
+        m_MaxHp =  m_Data.GetMaxHp();
+        m_MinHp = m_Data.GetMinHp();
         m_Speed = m_Data.GetSpeed();
         m_Tilt = m_Data.GetTilt();
         m_BulletSpeed = m_Data.GetBulletSpeed();
         m_Damage = m_Data.GetDamageBullet();
+        m_ShootTimer = m_Data.GetShootTimer();
+    }
+    private void Start()
+    {
+        m_CurrentHp = m_MaxHp;
+        m_CurrentTime=0f;
     }
 
     private void Update()
@@ -62,29 +77,53 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void GetInputs()
     {
-        m_Input.x = Input.GetAxisRaw("Horizontal");
-        m_Input.z = Input.GetAxisRaw("Vertical");
-        Debug.Log(m_Input);
-        if(Input.GetButton("Fire1"))
+        
+        m_Input.x = Input.GetAxisRaw("Horizontal"+m_PlayerID);
+        m_Input.z = Input.GetAxisRaw("Vertical"+m_PlayerID);
+        if(Input.GetButton("Fire1"+m_PlayerID)&m_CanShoot)
         {
             Bullets pooledBullet = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab,transform.position, transform.rotation);
             pooledBullet.BulletInit(m_Damage,m_BulletSpeed);
-            //AudioManager FxBullet = AudioManager.Instance.PlaySFX<SFXAudio>(m_SoundBullet,transform.position);
+
+            AudioManager.Instance.PlaySFX(m_SoundBullet,transform.position);
+            m_CanShoot = false;
         }
+        Cooldown();
     }
     private void SetTilt()
     {
         m_Rb.rotation = Quaternion.Euler (0.0f, 0.0f, m_Rb.velocity.x * -m_Tilt);
     }
+    private void  Cooldown()
+    {
+        if(!m_CanShoot)
+        {
+            m_CurrentTime += Time.deltaTime;
+            if(m_CurrentTime >= m_ShootTimer)
+            {
+                m_CanShoot=true;
+                m_CurrentTime = 0f;
+            }
+        }
+    }
 
     public void DamageReceived(int aDamageReceived)
     {
-        
+        m_CurrentHp -= aDamageReceived;
+        if(m_CurrentHp <= m_MinHp)
+        {
+            m_CurrentHp = m_MinHp;
+            // On le destroy tu ?
+        }
     }
 
     public void HealReceived(int aHealReceived)
     {
-
+        m_CurrentHp += aHealReceived;
+        if(m_CurrentHp >= m_MaxHp)
+        {
+            m_CurrentHp = m_MaxHp;
+        }
     }
 
 
