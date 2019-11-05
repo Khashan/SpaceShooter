@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Boss : MonoBehaviour, IDamageable
 {
-    private enum BossState
+    [System.Serializable]
+    public struct BossPhase
     {
-        PHASE_01,
-        PHASE_02,
-        PHASE_03,
-        Count
+        public string m_NamePhase;
+        public int m_StartPhaseHealth;
+        public int m_EndPhaseHealth;
+        public ScriptableBossAbility m_AbilityCast;
     }
 
-    private StateMachine m_StateMachine;
-    
     [SerializeField]
     private GameObject m_BulletPrefab;
 
     [SerializeField]
-    private List<int> m_PhaseHealthMax = new List<int> { 70, 30 };
-
+    private List<BossPhase> m_Phases = new List<BossPhase>();
 
     [SerializeField]
     private float m_ProtectionBetweenPhases = 1.25f;
@@ -43,38 +43,21 @@ public class Boss : MonoBehaviour, IDamageable
     private float m_BulletSpeed = 2f;
 
     private bool m_IsGodMode = false;
-    private BossState m_CurrentStage;
-    private Coroutine m_Ability;
-
+    private int m_CurrentPhase = -1;
 
     private void Awake()
     {
-        InitStateMachine();
-    }
-
-    private void InitStateMachine()
-    {
-        m_StateMachine = new StateMachine(BossState.Count.ToInt());
-        m_StateMachine.AddState(BossState.PHASE_01.ToInt(), Phase01Enter, Phase01Update, Phase01Exit);
-        m_StateMachine.AddState(BossState.PHASE_02.ToInt(), Phase02Enter, Phase02Update, Phase02Exit);
-        m_StateMachine.AddState(BossState.PHASE_02.ToInt(), Phase03Enter, Phase03Update, Phase03Exit);
-
-        m_StateMachine.ChangeState(BossState.PHASE_01.ToInt());
+        ChangeBossStage();
     }
 
     private void Update()
     {
-        m_StateMachine.Update();
-
         if (m_CurrentProtectionTimer > 0)
         {
             ProtectionTimer();
         }
-        else if(m_Ability == null)
-        {
-            AutoAttackTimer();
-        }
 
+        AttackTimer();
     }
 
     private void ProtectionTimer()
@@ -87,14 +70,26 @@ public class Boss : MonoBehaviour, IDamageable
         }
     }
 
-    private void AutoAttackTimer()
+    private void AttackTimer()
     {
         m_CurrentAttackTime -= Time.deltaTime;
 
-        if(m_CurrentAttackTime <= 0)
+        if (m_CurrentAttackTime <= 0)
         {
             m_CurrentAttackTime = m_AttackRate;
             AutoAttack();
+        }
+        else if (!m_IsGodMode)
+        {
+            if (m_CurrentAbilityTime <= 0f)
+            {
+                m_CurrentAbilityTime = m_AbilityRate;
+                m_Phases[m_CurrentPhase].m_AbilityCast.CastAbility(transform);
+            }
+            else
+            {
+                m_CurrentAbilityTime -= Time.deltaTime;
+            }
         }
     }
 
@@ -104,92 +99,23 @@ public class Boss : MonoBehaviour, IDamageable
         projectile.BulletInit(m_BulletDamage, m_BulletSpeed);
     }
 
-
-    #region Phases
-
-    //Phase 01
-    private void Phase01Enter()
-    {
-        ChangeBossStage(BossState.PHASE_01);
-        m_CurrentAbilityTime = m_AbilityRate;
-        m_CurrentAttackTime = 0f;
-    }
-
-    private void Phase01Update()
-    {
-        if(!m_IsGodMode && m_Ability == null)
-        {
-            if(m_CurrentAbilityTime <= 0f)
-            {
-                m_CurrentAbilityTime = m_AbilityRate;
-                m_Ability = StartCoroutine(Phase01Ability());
-            }
-            else
-            {
-                m_CurrentAbilityTime -= Time.deltaTime;
-            }
-        }
-    }
-
-    private void Phase01Exit()
-    {
-
-    }
-
-    //Phase 02
-    private void Phase02Enter()
-    {
-        ChangeBossStage(BossState.PHASE_02);
-    }
-
-    private void Phase02Update()
-    {
-
-    }
-
-    private void Phase02Exit()
-    {
-
-    }
-
-    //Phase 03
-    private void Phase03Enter()
-    {
-        ChangeBossStage(BossState.PHASE_03);
-    }
-
-    private void Phase03Update()
-    {
-
-    }
-
-    private void Phase03Exit()
-    {
-
-    }
-
-    private void ChangeBossStage(BossState aBossState)
+    private void ChangeBossStage()
     {
         m_IsGodMode = true;
+
         m_CurrentProtectionTimer = m_ProtectionBetweenPhases;
-        m_CurrentStage = aBossState;
-    }
+        m_CurrentAbilityTime = m_AbilityRate;
+        m_CurrentAttackTime = m_AttackRate;
 
+        m_CurrentPhase++;
 
-    private IEnumerator Phase01Ability()
-    {
-        int rotationGaps = 15;
-        int rotation = rotationGaps;
-
-        while(rotation <= 360)
+        if (m_CurrentPhase >= m_Phases.Count)
         {
-            transform.Rotate(Vector3.up * rotationGaps);
-            rotation += rotationGaps;
-            AutoAttack();
+            m_CurrentPhase--;
+            Debug.LogError("OutOfBounds Boss Phases! Be sure than the last boss phase has the endhealth set lower or equals of 0");
         }
-        yield return null;
 
-        m_Ability = null;
+        m_CurrentHealth = m_Phases[m_CurrentPhase].m_StartPhaseHealth;
     }
 
     public void DamageReceived(int aDamageReceived)
@@ -198,30 +124,18 @@ public class Boss : MonoBehaviour, IDamageable
         {
             m_CurrentHealth -= aDamageReceived;
 
-            int m_NextPhaseHealth = 0;
-            int m_NextStage = -1;
-
-            if (m_StateMachine.GetCurrentState() != BossState.PHASE_03.ToInt())
-            {
-                m_NextPhaseHealth = m_PhaseHealthMax[m_CurrentStage.ToInt() +1];
-                m_NextStage = m_CurrentStage.ToInt() + 1; ;
-            }
-
-            if (m_CurrentHealth <= m_NextPhaseHealth)
-            {
-                m_CurrentHealth = m_NextPhaseHealth;
-
-                if (m_NextStage != -1)
-                {
-                    m_StateMachine.ChangeState((m_CurrentStage.ToInt() + 1));
-                }
-            }
+            int endPhaseHealth = m_Phases[m_CurrentPhase].m_EndPhaseHealth;
 
             if (m_CurrentHealth <= 0)
             {
                 Death();
             }
-
+            else if (m_CurrentHealth <= endPhaseHealth)
+            {
+                ChangeBossStage();
+                m_CurrentPhase++;
+                m_CurrentHealth = m_Phases[m_CurrentPhase].m_StartPhaseHealth;
+            }
         }
     }
 
@@ -239,7 +153,5 @@ public class Boss : MonoBehaviour, IDamageable
     {
 
     }
-    #endregion
-
 }
 
