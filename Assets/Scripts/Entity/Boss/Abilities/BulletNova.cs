@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObject/Ability/BossNova")]
+[CreateAssetMenu(menuName = PATH_NAME + "BossNova")]
 public class BulletNova : ScriptableBossAbility
 {
     [SerializeField]
@@ -14,7 +15,7 @@ public class BulletNova : ScriptableBossAbility
 
     private Transform m_Caster;
 
-    public override void CastAbility(Transform aCasting)
+    public override IEnumerator CastAbility(Transform aCasting)
     {
         if (m_DegreeGaps <= 0)
         {
@@ -28,6 +29,7 @@ public class BulletNova : ScriptableBossAbility
         int rotationDone = rotationGaps;
 
         Quaternion holderCasterRotation = aCasting.rotation;
+        m_Caster.rotation = Quaternion.identity;
 
         while (rotationDone <= m_Radius)
         {
@@ -36,7 +38,10 @@ public class BulletNova : ScriptableBossAbility
             AutoAttack();
         }
 
+        AudioManager.Instance.PlaySFX(m_AbilityAudio, m_Caster.position);
         m_Caster.rotation = holderCasterRotation;
+
+        yield return null;
     }
 
     private void AutoAttack()

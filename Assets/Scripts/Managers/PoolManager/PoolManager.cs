@@ -2,30 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct PoolStruct
-{
-    public GameObject m_Prefab;
-    public int m_Size;
-    [Tooltip("If the the pool already used all its GameObject, Re-Use the first active one")]
-    public bool m_LimitReachUseActiveObject;
-}
-
 public class PoolManager : Singleton<PoolManager>
 {
+    [System.Serializable]
+    public struct PoolStruct
+    {
+        public string m_PoolName;
+        public GameObject m_Prefab;
+        public int m_Size;
+        [Tooltip("If the the pool already used all its GameObject, Re-Use the first active one")]
+        public bool m_LimitReachUseActiveObject;
+    }
+
+    [Tooltip("Might affect the performance, recommanded to set it off at the build")]
     [SerializeField]
+    private bool m_CreateParentForPools = false;
+
     private List<PoolStruct> m_Pools = new List<PoolStruct>();
 
     private Dictionary<GameObject, List<GameObject>> m_PoolsObjects = new Dictionary<GameObject, List<GameObject>>();
     private Dictionary<GameObject, List<GameObject>> m_PoolsActiveObjects = new Dictionary<GameObject, List<GameObject>>();
 
-    protected override void Awake()
+    public void InitalizePools(List<PoolStruct> a_Pools)
     {
-        base.Awake();
+        m_Pools = a_Pools;
+        ClearOlderPools();
         CreatePools();
     }
 
-    //Create Pools
+    private void ClearOlderPools()
+    {
+        //No need to delete, Unity will do it for us during a switch scene.
+        m_PoolsObjects.Clear();
+        m_PoolsActiveObjects.Clear();
+    }
+
     private void CreatePools()
     {
         for (int i = 0; i < m_Pools.Count; i++)
@@ -46,19 +57,26 @@ public class PoolManager : Singleton<PoolManager>
         return a_Pool.m_Prefab != null;
     }
 
-    //Create Pool's Objects
     private void GrowPool(PoolStruct a_Pool)
     {
+        GameObject parent = null;
+
+        if (m_CreateParentForPools)
+        {
+            parent = new GameObject(a_Pool.m_PoolName);
+        }
+
         for (int i = 0; i < a_Pool.m_Size; i++)
         {
-            CreatePooledObject(a_Pool.m_Prefab);
+            CreatePooledObject(a_Pool.m_Prefab, parent != null ? parent.transform : null);
         }
     }
 
-    //Create Object for the pool and config
-    private void CreatePooledObject(GameObject a_PoolPrefab)
+    private void CreatePooledObject(GameObject a_PoolPrefab, Transform a_Parent = null)
     {
-        GameObject pooledGameObject = Instantiate(a_PoolPrefab, transform);
+        GameObject pooledGameObject = Instantiate(a_PoolPrefab);
+        pooledGameObject.transform.SetParent(a_Parent);
+
         PooledObject pooledScript = pooledGameObject.GetComponent<PooledObject>();
 
         if (pooledScript == null)
@@ -134,7 +152,6 @@ public class PoolManager : Singleton<PoolManager>
         return null;
     }
 
-    //Get a Pool with a prefab
     private PoolStruct GetPoolStruct(GameObject a_PoolPrefab)
     {
         for (int i = 0; i < m_Pools.Count; i++)

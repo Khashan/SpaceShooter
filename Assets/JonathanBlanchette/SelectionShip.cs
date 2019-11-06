@@ -2,17 +2,20 @@
 using System.Linq;
 using UnityEngine;
 
-/*
-    TODO:
-    Make so what in front of the camera is the Selected Ship
-    Make so if there's an empy space to the direction the player wants -> Do not rotate or Rotate 2x
- */
-
 public class SelectionShip : MonoBehaviour
 {
+    [System.Serializable]
+    public struct ShipSocket
+    {
+        public GameObject m_ShipInScene;
+        public GameObject m_ShipPrefabs;
+    }
+
     [SerializeField]
-    //Shouldnt be GameObject but another script which the ships owns
-    private List<GameObject> m_Ships = new List<GameObject>();
+    private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
+
+    [SerializeField]
+    private List<GameObject> m_SelectedShip = new List<GameObject>();
 
     [SerializeField]
     private float m_Radius = 15f;
@@ -20,6 +23,7 @@ public class SelectionShip : MonoBehaviour
     [Range(0.01f, 0.99f)]
     private float m_RotateSpeed = 0.2f;
 
+    private PlayerID m_CurrentPlayer;
 
     private Dictionary<Transform, float> m_ShipsClock = new Dictionary<Transform, float>();
 
@@ -47,9 +51,9 @@ public class SelectionShip : MonoBehaviour
         m_Players = GameManager.Instance.PlayerCount;
         m_Camera = Camera.main;
 
-        for (int i = 0; i < m_Ships.Count; i++)
+        for (int i = 0; i < m_ShipsStruct.Count; i++)
         {
-            m_ShipsClock.Add(m_Ships[i].transform, i * 15);
+            m_ShipsClock.Add(m_ShipsStruct[i].m_ShipInScene.transform, i * 15 + 15);
         }
     }
 
@@ -62,14 +66,14 @@ public class SelectionShip : MonoBehaviour
                 MoveShipSlot(m_ShipsClock.ElementAt(i));
             }
 
-            if (m_CompletedRotation.Count == m_Ships.Count)
+            if (m_CompletedRotation.Count == m_ShipsStruct.Count)
             {
                 m_IsMoving = false;
             }
         }
         else
         {
-            m_Direction = (int)Input.GetAxisRaw("HorizontalPlayerOne");
+            m_Direction = (int)Input.GetAxisRaw("Horizontal" + m_CurrentPlayer);
 
             if (m_Direction != 0)
             {
@@ -77,11 +81,7 @@ public class SelectionShip : MonoBehaviour
             }
         }
 
-        if (m_Players == 1)
-        {
-            GetShipSelection();
-        }
-
+        PlayerSelectionShip();
     }
 
     private void MoveShipSlot(KeyValuePair<Transform, float> aShip)
@@ -91,7 +91,7 @@ public class SelectionShip : MonoBehaviour
             return;
         }
 
-        float shipTime = aShip.Value + (m_Direction > 0 ? m_RotateSpeed : -m_RotateSpeed);
+        float shipTime = aShip.Value + (m_Direction > 0 ? -m_RotateSpeed : m_RotateSpeed);
 
         GetShipNextTickPosition(aShip.Key, shipTime);
 
@@ -122,55 +122,61 @@ public class SelectionShip : MonoBehaviour
         m_CompletedRotation.Clear();
         m_IsMoving = true;
 
-        for (int i = 0; i < m_Ships.Count; i++)
+        for (int i = 0; i < m_ShipsStruct.Count; i++)
         {
-            Transform shipTransform = m_Ships[i].transform;
+            Transform shipTransform = m_ShipsStruct[i].m_ShipInScene.transform;
 
-            float time = m_ShipsClock[shipTransform] + (1 * m_Direction);
+            float time = m_ShipsClock[shipTransform] + (1 * -m_Direction);
             m_ShipsClock[shipTransform] = time;
         }
     }
 
-    private bool GetShipSelection()
+
+    /// <summary >
+    ///
+    /// </summary>
+    private void PlayerSelectionShip()
     {
-
-        if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipBase")))
+        if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("Ship")))
         {
-            Debug.Log(LayerMask.GetMask() + "ShipBase");
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (Input.GetButtonDown(m_CurrentPlayer + "Submit"))
             {
-                /*
-                    Bad m_Ships should be a another script
-                    EX: DisplayShip which contains in its member variable GameObject PrefabShip
-                    Add the PrefabShip to the GameManger List (ListShipSelect);
-                 */
-                GameObject shipBase = m_Ships[0];
-                GameManager.Instance.ListShipSelect.Add(shipBase);
+                GameObject tToutchShip = GetShipSocketPrefabs(m_Hit.transform.gameObject);   // contient se que le raycast touche 
+                if (tToutchShip == null)
+                {
+                    return;
+                }
 
-                LevelManager.Instance.ChangeLevel("Game", true, -1);
+                m_SelectedShip.Add(tToutchShip);
+
+                GameManager.Instance.ListShipSelect = m_SelectedShip;
+
+                if (m_SelectedShip.Count == GameManager.Instance.PlayerCount)
+                {
+                    LevelManager.Instance.ChangeLevel("Game", true);
+                }
+                else
+                {
+                    m_CurrentPlayer = PlayerID.PlayerTwo;
+                }
             }
         }
-        else if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipUpgrade")))
-        {
-            Debug.Log(LayerMask.GetMask() + "ShipUpgrade");
-
-        }
-        else if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("ShipLock")))
-        {
-            Debug.Log(LayerMask.GetMask() + "ShipLock");
-        }
-
-        // GameObject shipBase = Instantiate(m_Ships[0]);
-        // GameManager.Instance.ListShipSelect.Add(shipBase);
-        // Debug.Log(shipBase);
-        // Debug.Log("Toutch something");
-
-
-
-
-
-        return true;
     }
 
+
+
+    /// <summary >
+    ///
+    /// </summary>
+    private GameObject GetShipSocketPrefabs(GameObject aShipSelected)
+    {
+        for (int i = 0; i < m_ShipsStruct.Count; i++)
+        {
+            if (m_ShipsStruct[i].m_ShipInScene.Equals(aShipSelected))
+            {
+                return m_ShipsStruct[i].m_ShipPrefabs;
+            }
+        }
+        return null;
+    }
 }
