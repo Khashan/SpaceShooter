@@ -115,7 +115,6 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void DamageReceived(int aDamageReceived)
     {
-        Debug.Log("OUtch");
         m_CurrentHp -= aDamageReceived;
         if (m_CurrentHp <= 0)
         {
@@ -126,7 +125,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Death()
     {
-        PoolManager.Instance.UseObjectFromPool(m_ExplosionSFX, transform.position, transform.rotation);
+        Instantiate(m_ExplosionSFX, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 
     public void HealReceived(int aHealReceived)

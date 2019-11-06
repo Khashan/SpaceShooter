@@ -192,17 +192,21 @@ public class PoolManager : Singleton<PoolManager>
     }
 
     //Manually return a PooledObject.
-    public void ReturnedPooledObject(PooledObject a_PooledObject, GameObject a_PoolOwner)
+    public void ReturnedPooledObject(PooledObject a_PooledObject)
     {
         PoolStruct pool = GetPoolStruct(a_PooledObject.gameObject);
+        GameObject poolOwner = a_PooledObject.PoolOwner;
 
-        if (m_PoolsActiveObjects.ContainsKey(a_PooledObject.PoolOwner))
+        if (poolOwner != null && m_PoolsActiveObjects.ContainsKey(poolOwner))
         {
-            List<GameObject> activeObjects = m_PoolsActiveObjects[a_PoolOwner];
-
-            if (activeObjects.Count != 0)
+            if (m_PoolsActiveObjects[poolOwner].Contains(a_PooledObject.gameObject))
             {
-                activeObjects.Remove(a_PooledObject.gameObject);
+                List<GameObject> activeObjects = m_PoolsActiveObjects[poolOwner];
+
+                if (activeObjects.Count != 0)
+                {
+                    activeObjects.Remove(a_PooledObject.gameObject);
+                }
             }
         }
     }

@@ -9,4 +9,10 @@ public class OutOfMapDestroyer : MonoBehaviour
         IDamageable target = aCol.GetComponent<IDamageable>();
         target?.DamageReceived(1000);
     }
+
+    private void OnCollisionEnter(Collision aCol)
+    {
+        IDamageable target = aCol.transform.GetComponent<IDamageable>();
+        target?.DamageReceived(1000);
+    }
 }
