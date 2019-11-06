@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemi : MonoBehaviour
+public class Enemy : MonoBehaviour
 {   
     private float m_CurrentSpeed;
 	private float m_TargetManeuver;
@@ -41,7 +41,7 @@ public class Enemi : MonoBehaviour
 
     private void Awake()
     {
-
+        SetData();
     }
 
 	private void Start ()
