@@ -15,7 +15,6 @@ public class GameSpawnPlayers : MonoBehaviour
             return;
         }
 
-        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[m_IdPlayerToSpawn]);
-        refship.transform.position = transform.position;
+        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[m_IdPlayerToSpawn],transform.position,Quaternion.identity);
     }
 }

@@ -17,4 +17,18 @@ public class GameManager : Singleton<GameManager>
         get { return m_ListShipSelect; }
         set { m_ListShipSelect = value; }
     }
+
+    private GameObject m_ShipPlayerOne;
+    public GameObject ShipPlayerOne
+    {
+        get {return m_ShipPlayerOne;}
+        set {m_ShipPlayerOne = value;}
+    }
+
+    private GameObject m_ShipPlayerTwo;
+    public GameObject ShipPlayerTwo
+    {
+        get {return m_ShipPlayerTwo;}
+        set {m_ShipPlayerTwo = value;}
+    }
 }

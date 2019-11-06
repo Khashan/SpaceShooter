@@ -24,9 +24,9 @@ public class Done_GameController : MonoBehaviour
     {
         gameOver = false;
         restart = false;
-        restartText.text = "";
-        gameOverText.text = "";
-        score = 0;
+       // restartText.text = "";
+       // gameOverText.text = "";
+        //score = 0;
         UpdateScore();
         StartCoroutine(SpawnWaves());
     }
@@ -59,7 +59,7 @@ public class Done_GameController : MonoBehaviour
 
             if (gameOver)
             {
-                restartText.text = "Press 'R' for Restart";
+                //restartText.text = "Press 'R' for Restart";
                 restart = true;
                 break;
             }
@@ -74,12 +74,12 @@ public class Done_GameController : MonoBehaviour
 
     void UpdateScore()
     {
-        scoreText.text = "Score: " + score;
+        //scoreText.text = "Score: " + score;
     }
 
     public void GameOver()
     {
-        gameOverText.text = "Game Over!";
+        //gameOverText.text = "Game Over!";
         gameOver = true;
     }
 

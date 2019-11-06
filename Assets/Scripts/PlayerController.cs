@@ -7,6 +7,7 @@ public enum PlayerID
     PlayerOne,
     PlayerTwo  
 }
+
 public class PlayerController : MonoBehaviour, IDamageable
 {
     private int m_CurrentHp;
