@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SelectionShip : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class SelectionShip : MonoBehaviour
     }
 
     [SerializeField]
-    private Button m_ButtonPress;
+    private  TextMeshProUGUI m_TextPress;
 
     [SerializeField]
     private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
@@ -53,8 +54,8 @@ public class SelectionShip : MonoBehaviour
 
     private void Start()
     {
-        m_ButtonPress.enabled = false;
-        
+        m_TextPress.enabled = false;
+
         m_LockedShipIndcator.SetActive(!GameManager.Instance.BossDead);
         m_LockedShipCollider.enabled = !GameManager.Instance.BossDead;
 
@@ -91,6 +92,7 @@ public class SelectionShip : MonoBehaviour
             }
         }
 
+        ShowText();
         PlayerSelectionShip();
     }
 
@@ -152,11 +154,16 @@ public class SelectionShip : MonoBehaviour
             if (Input.GetButtonDown(m_CurrentPlayer + "Submit"))
             {
                 GameObject tToutchShip = GetShipSocketPrefabs(m_Hit.transform.gameObject);   // contient se que le raycast touche 
-                m_ButtonPress.enabled = true;
+                
                 if (tToutchShip == null)
                 {
+                    
                     return;
                 }
+              
+               
+                Debug.Log("FUCK");                    
+                
 
                 m_SelectedShip.Add(tToutchShip);
 
@@ -172,6 +179,18 @@ public class SelectionShip : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void ShowText()
+    {
+        if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, m_LengthRaycast, LayerMask.GetMask("Ship"))) 
+        {
+            Debug.Log("Hello");
+            m_TextPress.enabled = true;
+        }  
+        else
+            m_TextPress.enabled = false;
+
     }
 
 
