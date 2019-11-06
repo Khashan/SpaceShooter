@@ -11,6 +11,8 @@ public class Enemi : MonoBehaviour
     private float m_Speed = 5f;
     [SerializeField]
     private Rigidbody m_RB;
+    [SerializeField]
+    private EnemyData m_EnemyData;
 
     [Header("weapon")]
     [SerializeField]
@@ -37,7 +39,10 @@ public class Enemi : MonoBehaviour
 	private Vector2 m_ManeuverWait = new Vector2();
 
 
+    private void Awake()
+    {
 
+    }
 
 	private void Start ()
 	{
@@ -46,6 +51,7 @@ public class Enemi : MonoBehaviour
 		InvokeRepeating ("Fire", m_Delay, m_FireRate);
         StartCoroutine(Evade());
 	}
+
 
     IEnumerator Evade ()
 	{
@@ -58,6 +64,17 @@ public class Enemi : MonoBehaviour
 			yield return new WaitForSeconds (Random.Range (m_ManeuverWait.x, m_ManeuverWait.y));
 		}
 	}
+
+    private void SetData()
+    {
+        m_Speed = m_EnemyData.GetSpeed();
+        m_FireRate = m_EnemyData.GetFireRate();
+        m_Delay = m_EnemyData.GetDelay();
+        m_Tilt = m_EnemyData.GetTilt();
+        m_Dodge = m_EnemyData.GetDodge();
+        m_Smoothing = m_EnemyData.GetSmoothing();
+    }
+
     private void FixedUpdate()
     {        
         Evasive();
