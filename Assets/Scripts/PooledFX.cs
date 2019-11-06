@@ -6,8 +6,16 @@ public class PooledFX : PooledObject
     private float m_LifeTime = 2f;
     private float m_CurrentLifeTime;
 
+    [SerializeField]
+    private AudioClip m_SFX;
+
     private void OnEnable()
     {
+        if (m_HasBeendInitialized)
+        {
+            AudioManager.Instance.PlaySFX(m_SFX, transform.position);
+        }
+
         m_CurrentLifeTime = m_LifeTime;
     }
 

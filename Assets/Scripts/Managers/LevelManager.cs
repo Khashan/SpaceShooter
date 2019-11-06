@@ -30,6 +30,7 @@ public class LevelManager : Singleton<LevelManager>
     private bool m_FadeOut = false;
 
     public Action m_OnLoadingFinished;
+    public Action m_OnLoadingStarted;
 
     protected override void Awake()
     {
@@ -84,6 +85,11 @@ public class LevelManager : Singleton<LevelManager>
     {
         m_SceneLoaded = false;
         m_LoadingScreen.blocksRaycasts = true;
+
+        if (m_OnLoadingStarted != null)
+        {
+            m_OnLoadingStarted();
+        }
 
         if (!m_FadeIn)
         {

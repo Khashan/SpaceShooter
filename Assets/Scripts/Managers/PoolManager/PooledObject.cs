@@ -10,6 +10,8 @@ public abstract class PooledObject : MonoBehaviour
         get { return m_PoolOwner; }
     }
 
+    protected bool m_HasBeendInitialized = false;
+
     public virtual void InitPooledObject(GameObject a_PoolOwner)
     {
         m_PoolOwner = a_PoolOwner;
@@ -18,7 +20,9 @@ public abstract class PooledObject : MonoBehaviour
 
     protected virtual void OnDisable()
     {
-        PoolManager.Instance.ReturnedPooledObject(this, PoolOwner);
+        m_HasBeendInitialized = true;
+
+        PoolManager.Instance.ReturnedPooledObject(this);
     }
 
 }

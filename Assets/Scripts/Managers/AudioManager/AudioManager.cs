@@ -16,10 +16,12 @@ public class AudioManager : Singleton<AudioManager>
 
     private bool m_IsMusicFadingOut = false;
     private bool m_IsMusicFadingIn = false;
+    private bool m_NewSceneMusic = false;
 
     private void Start()
     {
         LevelManager.Instance.m_OnLoadingFinished += OnSceneFinishedLoading;
+        LevelManager.Instance.m_OnLoadingFinished += OnSceneStartedLoading;
         m_MusicPlayer.volume = 0;
     }
 
@@ -52,14 +54,14 @@ public class AudioManager : Singleton<AudioManager>
 
     private void TransitioningToAnotherMusic()
     {
-        m_MusicPlayer.clip = m_NextMusicToPlay;
-        m_NextMusicToPlay = null;
         m_IsMusicFadingOut = false;
         PlayMusicPlayer();
     }
 
     private void PlayMusicPlayer()
     {
+        m_MusicPlayer.clip = m_NextMusicToPlay;
+        m_NextMusicToPlay = null;
         m_IsMusicFadingIn = true;
         m_MusicPlayer.Play();
     }
@@ -115,6 +117,7 @@ public class AudioManager : Singleton<AudioManager>
     {
         if (a_Music != null)
         {
+            m_NewSceneMusic = true;
             m_NextMusicToPlay = a_Music;
             StopMusic();
         }
@@ -132,7 +135,15 @@ public class AudioManager : Singleton<AudioManager>
 
     private void OnSceneFinishedLoading()
     {
-        StopMusic();
+        if (!m_NewSceneMusic)
+        {
+            StopMusic();
+        }
+    }
+
+    private void OnSceneStartedLoading()
+    {
+        m_NewSceneMusic = false;
     }
 
     #endregion
