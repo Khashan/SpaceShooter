@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+<<<<<<< HEAD:Assets/ChrisGYM/Enemy Ship 1.prefab.meta
+guid: e129d9d8b61c51e42be700d43ac80f3f
+PrefabImporter:
+  externalObjects: {}
+=======
+guid: df0aa777bdb280942939941a2946419b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+>>>>>>> 84a7b5b4256f558e48416ea7e6c7fa220c5bc723:Assets/Datas/Enemy/enemy1.asset.meta
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

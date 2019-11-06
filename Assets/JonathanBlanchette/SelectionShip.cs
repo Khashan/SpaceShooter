@@ -13,6 +13,9 @@ public class SelectionShip : MonoBehaviour
     }
 
     [SerializeField]
+    private Button m_ButtonPress;
+
+    [SerializeField]
     private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
 
     [SerializeField]
@@ -47,15 +50,10 @@ public class SelectionShip : MonoBehaviour
     private int m_Players;
 
 
-    //UI
-    [SerializeField]
-    private Button m_ButtonPlayerOne;
-    [SerializeField]
-    private Button m_ButtonPlayerTwo;
 
     private void Start()
     {
-        m_ButtonPlayerOne.enabled = false;
+        m_ButtonPress.enabled = false;
         
         m_LockedShipIndcator.SetActive(!GameManager.Instance.BossDead);
         m_LockedShipCollider.enabled = !GameManager.Instance.BossDead;
@@ -154,13 +152,10 @@ public class SelectionShip : MonoBehaviour
             if (Input.GetButtonDown(m_CurrentPlayer + "Submit"))
             {
                 GameObject tToutchShip = GetShipSocketPrefabs(m_Hit.transform.gameObject);   // contient se que le raycast touche 
+                m_ButtonPress.enabled = true;
                 if (tToutchShip == null)
                 {
                     return;
-                }
-                else
-                {
-                    m_ButtonPlayerOne.enabled = true;
                 }
 
                 m_SelectedShip.Add(tToutchShip);
@@ -178,6 +173,8 @@ public class SelectionShip : MonoBehaviour
             }
         }
     }
+
+
 
     /// <summary >
     ///

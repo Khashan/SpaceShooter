@@ -2,93 +2,68 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 
 public class Done_GameController : MonoBehaviour
 {
-    public GameObject[] hazards;
-    public Vector3 spawnValues;
-    public int hazardCount;
-    public float spawnWait;
-    public float startWait;
-    public float waveWait;
+    [SerializeField]
+    private TextMeshProUGUI m_ScoreText;
 
-    public Text scoreText;
-    public Text restartText;
-    public Text gameOverText;
+    [SerializeField]
+    private TextMeshProUGUI m_RestartText;
 
-    private bool gameOver;
-    private bool restart;
-    private int score;
+    [SerializeField]
+    private Image m_GameOverImage;
 
-    void Start()
+    private bool m_GameOver;
+    private bool m_Restart;
+    private int m_Score;
+
+    private void Start()
     {
-        gameOver = false;
-        restart = false;
-       // restartText.text = "";
-       // gameOverText.text = "";
-        //score = 0;
+        m_GameOver = false;
+        m_Restart = false;
+        m_RestartText.text = "";
+        //m_GameOverText.text = "";
+        m_Score = 0;
         UpdateScore();
-        StartCoroutine(SpawnWaves());
     }
 
-    void Update()
+    private void Update()
     {
-        if (restart)
+        if (m_Restart)
         {
             if (Input.GetKeyDown(KeyCode.R))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
-        }
-    }
-
-    IEnumerator SpawnWaves()
-    {
-        yield return new WaitForSeconds(startWait);
-        while (true)
-        {
-            for (int i = 0; i < hazardCount; i++)
-            {
-                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-                Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
-                Quaternion spawnRotation = Quaternion.identity;
-                Instantiate(hazard, spawnPosition, spawnRotation);
-                yield return new WaitForSeconds(spawnWait);
-            }
-            yield return new WaitForSeconds(waveWait);
-
-            if (gameOver)
-            {
-                //restartText.text = "Press 'R' for Restart";
-                restart = true;
-                break;
+                LevelManager.Instance.ChangeLevel("Game",false);
             }
         }
     }
 
     public void AddScore(int newScoreValue)
     {
-        score += newScoreValue;
+        m_Score += newScoreValue;
         UpdateScore();
     }
 
     void UpdateScore()
     {
-        //scoreText.text = "Score: " + score;
+        m_ScoreText.text = "Score: " +m_Score;
     }
 
     public void GameOver()
     {
-        //gameOverText.text = "Game Over!";
-        gameOver = true;
+        //m_GameOverText.text = "Game Over!";
+        m_GameOver = true;
+        m_GameOverImage.enabled = true;
     }
 
     private void OnTriggerEnter(Collider aCol)
     {
         if(aCol.tag == "Destroy")
-            {
-                Destroy(gameObject);
-                Destroy(this);
-            }
+        {
+            Destroy(gameObject);
+            Destroy(this);
+        }
     }
 }
