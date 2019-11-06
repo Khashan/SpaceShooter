@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectionShip : MonoBehaviour
 {
@@ -45,8 +46,17 @@ public class SelectionShip : MonoBehaviour
 
     private int m_Players;
 
+
+    //UI
+    [SerializeField]
+    private Button m_ButtonPlayerOne;
+    [SerializeField]
+    private Button m_ButtonPlayerTwo;
+
     private void Start()
     {
+        m_ButtonPlayerOne.enabled = false;
+        
         m_LockedShipIndcator.SetActive(!GameManager.Instance.BossDead);
         m_LockedShipCollider.enabled = !GameManager.Instance.BossDead;
 
@@ -148,6 +158,10 @@ public class SelectionShip : MonoBehaviour
                 {
                     return;
                 }
+                else
+                {
+                    m_ButtonPlayerOne.enabled = true;
+                }
 
                 m_SelectedShip.Add(tToutchShip);
 
@@ -164,8 +178,6 @@ public class SelectionShip : MonoBehaviour
             }
         }
     }
-
-
 
     /// <summary >
     ///
