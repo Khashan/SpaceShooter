@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameSpawnPlayers : MonoBehaviour
 {
@@ -10,11 +8,20 @@ public class GameSpawnPlayers : MonoBehaviour
 
     private void Start()
     {
-        if (m_IdPlayerToSpawn >= GameManager.Instance.ListShipSelect.Count)
+        if (m_IdPlayerToSpawn < GameManager.Instance.ListShipSelect.Count)
         {
-            return;
+            PlayerController refship = Instantiate(GameManager.Instance.ListShipSelect[m_IdPlayerToSpawn], transform.position, Quaternion.identity).GetComponent<PlayerController>();
+
+            if (refship == null)
+            {
+                Destroy(refship);
+            }
+            else
+            {
+                refship.SetUpPlayer((PlayerID)m_IdPlayerToSpawn);
+            }
         }
 
-        GameObject refship = Instantiate(GameManager.Instance.ListShipSelect[m_IdPlayerToSpawn],transform.position,Quaternion.identity);
+        Destroy(gameObject);
     }
 }

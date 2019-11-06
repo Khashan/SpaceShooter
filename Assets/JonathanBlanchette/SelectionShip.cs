@@ -53,7 +53,7 @@ public class SelectionShip : MonoBehaviour
 
         for (int i = 0; i < m_ShipsStruct.Count; i++)
         {
-            m_ShipsClock.Add(m_ShipsStruct[i].m_ShipInScene.transform, i * 15);
+            m_ShipsClock.Add(m_ShipsStruct[i].m_ShipInScene.transform, i * 15 + 15);
         }
     }
 
@@ -80,7 +80,7 @@ public class SelectionShip : MonoBehaviour
                 GetNextPosition();
             }
         }
-   
+
         PlayerSelectionShip();
     }
 
@@ -91,7 +91,7 @@ public class SelectionShip : MonoBehaviour
             return;
         }
 
-        float shipTime = aShip.Value + (m_Direction > 0 ? m_RotateSpeed : -m_RotateSpeed);
+        float shipTime = aShip.Value + (m_Direction > 0 ? -m_RotateSpeed : m_RotateSpeed);
 
         GetShipNextTickPosition(aShip.Key, shipTime);
 
@@ -108,7 +108,7 @@ public class SelectionShip : MonoBehaviour
     {
         m_ShipsClock[aShip] = aTime;
 
-        float angle = (aTime * 6)  * Mathf.Deg2Rad;
+        float angle = (aTime * 6) * Mathf.Deg2Rad;
 
         float x = Mathf.Cos(angle) * m_Radius;
         float z = Mathf.Sin(angle) * m_Radius;
@@ -126,7 +126,7 @@ public class SelectionShip : MonoBehaviour
         {
             Transform shipTransform = m_ShipsStruct[i].m_ShipInScene.transform;
 
-            float time = m_ShipsClock[shipTransform] + (1 * m_Direction);
+            float time = m_ShipsClock[shipTransform] + (1 * -m_Direction);
             m_ShipsClock[shipTransform] = time;
         }
     }
@@ -140,18 +140,18 @@ public class SelectionShip : MonoBehaviour
         if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, out m_Hit, m_LengthRaycast, LayerMask.GetMask("Ship")))
         {
             if (Input.GetButtonDown(m_CurrentPlayer + "Submit"))
-            {       
+            {
                 GameObject tToutchShip = GetShipSocketPrefabs(m_Hit.transform.gameObject);   // contient se que le raycast touche 
-                if(tToutchShip == null)
+                if (tToutchShip == null)
                 {
                     return;
                 }
-                
+
                 m_SelectedShip.Add(tToutchShip);
 
                 GameManager.Instance.ListShipSelect = m_SelectedShip;
 
-                if(m_SelectedShip.Count  == GameManager.Instance.PlayerCount)
+                if (m_SelectedShip.Count == GameManager.Instance.PlayerCount)
                 {
                     LevelManager.Instance.ChangeLevel("Game", true);
                 }
@@ -163,20 +163,20 @@ public class SelectionShip : MonoBehaviour
         }
     }
 
-    
-    
+
+
     /// <summary >
     ///
     /// </summary>
-    private GameObject GetShipSocketPrefabs(GameObject aShipSelected) 
+    private GameObject GetShipSocketPrefabs(GameObject aShipSelected)
     {
-        for(int i = 0; i < m_ShipsStruct.Count; i++)
+        for (int i = 0; i < m_ShipsStruct.Count; i++)
         {
-            if(m_ShipsStruct[i].m_ShipInScene.Equals(aShipSelected))
+            if (m_ShipsStruct[i].m_ShipInScene.Equals(aShipSelected))
             {
                 return m_ShipsStruct[i].m_ShipPrefabs;
             }
-        }      
-        return null;  
+        }
+        return null;
     }
 }

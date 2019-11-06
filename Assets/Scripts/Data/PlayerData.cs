@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "ScriptableObject/PlayerData", fileName ="NewPlayerData", order =1)]
+[CreateAssetMenu(menuName = "ScriptableObject/PlayerData", fileName = "NewPlayerData", order = 1)]
 public class PlayerData : ScriptableObject
 {
     [SerializeField]
     private int m_MaxHp;
-    [SerializeField]
-    private int m_MinHp;
     [SerializeField]
     private float m_Speed;
     [SerializeField]
@@ -19,7 +17,7 @@ public class PlayerData : ScriptableObject
     private float m_BulletSpeed;
     [SerializeField]
     private float m_ShootTimer;
-    
+
 
     public int GetMaxHp()
     {
@@ -29,10 +27,6 @@ public class PlayerData : ScriptableObject
     public float GetShootTimer()
     {
         return m_ShootTimer;
-    }
-    public int GetMinHp()
-    {
-        return m_MinHp;
     }
 
     public float GetSpeed()
