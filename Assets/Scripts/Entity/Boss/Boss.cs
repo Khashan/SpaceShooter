@@ -213,7 +213,7 @@ public class Boss : MonoBehaviour, IDamageable
     {
         m_RB.rotation = Quaternion.Euler(0, 0, m_RB.velocity.x * -m_Tilt);
         float newManeuver = Mathf.MoveTowards(m_RB.velocity.x, m_TargetManeuver, m_Smoothing * Time.deltaTime);
-        m_RB.velocity = new Vector3(newManeuver, 0.0f, 0f);
+        m_RB.velocity = transform.right * newManeuver;
     }
 }
 
