@@ -15,6 +15,8 @@ public class SelectionShip : MonoBehaviour
 
     [SerializeField]
     private  TextMeshProUGUI m_TextPress;
+    [SerializeField]
+    private  TextMeshProUGUI m_TextPress2;
 
     [SerializeField]
     private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
@@ -185,12 +187,22 @@ public class SelectionShip : MonoBehaviour
     {
         if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, m_LengthRaycast, LayerMask.GetMask("Ship"))) 
         {
-            Debug.Log("Hello");
-            m_TextPress.enabled = true;
+            if(m_CurrentPlayer == PlayerID.PlayerOne)
+            {
+                Debug.Log("Hello");
+                m_TextPress.enabled = true;
+            }
+            else if(m_CurrentPlayer == PlayerID.PlayerTwo)
+            {
+                m_TextPress.enabled = false;
+                m_TextPress2.enabled = true;
+            }
         }  
         else
+        {
             m_TextPress.enabled = false;
-
+            m_TextPress2.enabled = false;
+        }
     }
 
 
