@@ -159,7 +159,7 @@ public class Boss : MonoBehaviour, IDamageable
 
     private void Death()
     {
-
+        GameManager.Instance.BossDead = true;
     }
 }
 

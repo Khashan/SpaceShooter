@@ -15,15 +15,18 @@ public class SelectionShip : MonoBehaviour
     private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
 
     [SerializeField]
-    private List<GameObject> m_SelectedShip = new List<GameObject>();
-
-    [SerializeField]
     private float m_Radius = 15f;
     [SerializeField]
     [Range(0.01f, 0.99f)]
     private float m_RotateSpeed = 0.2f;
 
+    [SerializeField]
+    private GameObject m_LockedShipIndcator;
+    [SerializeField]
+    private Collider m_LockedShipCollider;
+
     private PlayerID m_CurrentPlayer;
+    private List<GameObject> m_SelectedShip = new List<GameObject>();
 
     private Dictionary<Transform, float> m_ShipsClock = new Dictionary<Transform, float>();
 
@@ -32,7 +35,6 @@ public class SelectionShip : MonoBehaviour
 
     private Vector3 m_GoToShip;
     private int m_Direction;
-
 
     //Camera for selection
     [SerializeField]
@@ -43,11 +45,11 @@ public class SelectionShip : MonoBehaviour
 
     private int m_Players;
 
-
-
-
     private void Start()
     {
+        m_LockedShipIndcator.SetActive(!GameManager.Instance.BossDead);
+        m_LockedShipCollider.enabled = !GameManager.Instance.BossDead;
+
         m_Players = GameManager.Instance.PlayerCount;
         m_Camera = Camera.main;
 
