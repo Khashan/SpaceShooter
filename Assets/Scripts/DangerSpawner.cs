@@ -44,10 +44,10 @@ public class DangerSpawner : MonoBehaviour
 
     private void Update()
     {
-        m_CurrentSpawnRate -= Time.deltaTime;
-
-        if (m_AsteroidPrefabs.Count == 0)
+        if (m_AsteroidPrefabs.Count > 0)
         {
+            m_CurrentSpawnRate -= Time.deltaTime;
+
             if (m_CurrentSpawnRate <= 0)
             {
                 m_CurrentSpawnRate = GetNextSpawnWaveRate();
@@ -55,13 +55,14 @@ public class DangerSpawner : MonoBehaviour
             }
         }
 
-        if (m_EnemyPrefabs.Count == 0)
+        if (m_EnemyPrefabs.Count > 0)
         {
             m_CurrentEnemySpawnRate -= Time.deltaTime;
 
             if (m_CurrentEnemySpawnRate <= 0)
             {
-                m_CurrentSpawnRate = GetNextEnemySpawnWaveRate();
+                m_CurrentEnemySpawnRate = GetNextEnemySpawnWaveRate();
+                SpawnRandomEnemy();
             }
         }
     }

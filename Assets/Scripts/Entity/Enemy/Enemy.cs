@@ -15,7 +15,7 @@ public class Enemy : PooledObject, IDamageable
 
     [Header("weapon")]
     [SerializeField]
-    private GameObject m_Shot;
+    private GameObject m_BulletPrefab;
     [SerializeField]
     private Transform m_ShotSpawn;
     [SerializeField]
@@ -52,8 +52,20 @@ public class Enemy : PooledObject, IDamageable
     {
         m_RB.velocity = transform.forward * m_Speed;
         m_CurrentSpeed = m_RB.velocity.z;
+    }
+
+    private void OnEnable()
+    {
         InvokeRepeating("Fire", m_Delay, m_FireRate);
         StartCoroutine(Evade());
+    }
+
+    protected override void OnDisable()
+    {
+        CancelInvoke();
+        StopAllCoroutines();
+
+        base.OnDisable();
     }
 
 
@@ -97,7 +109,7 @@ public class Enemy : PooledObject, IDamageable
 
     private void Fire()
     {
-        Bullets pooledBullet = PoolManager.Instance.UseObjectFromPool<Bullets>(m_Shot, m_ShotSpawn.position, m_ShotSpawn.rotation);
+        Bullets pooledBullet = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab, m_ShotSpawn.position, m_ShotSpawn.rotation);
         pooledBullet.BulletInit(1, m_BulletSpeed);
 
         AudioManager.Instance.PlaySFX(m_AttackSound, transform.position);
@@ -106,7 +118,9 @@ public class Enemy : PooledObject, IDamageable
     public void DamageReceived(int aDamageReceived)
     {
         PoolManager.Instance.UseObjectFromPool(m_ExplosionEffect, transform.position, transform.rotation);
+        GameManager.Instance.Scores += 50;
         gameObject.SetActive(false);
+
     }
 
     public void HealReceived(int aHealReceived)

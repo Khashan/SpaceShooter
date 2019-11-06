@@ -4,6 +4,24 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    private GameUI m_UI;
+    public GameUI GameUI
+    {
+        get { return m_UI; }
+        set { m_UI = value; }
+    }
+
+    private int m_Scores;
+    public int Scores
+    {
+        get { return m_Scores; }
+        set
+        {
+            m_Scores = value;
+            m_UI.UpdateScore(m_Scores);
+        }
+    }
+
     private int m_PlayerCount;
     public int PlayerCount
     {
@@ -17,6 +35,8 @@ public class GameManager : Singleton<GameManager>
         get { return m_BossDied; }
         set { m_BossDied = value; }
     }
+
+    private int m_DeadPlayerCount = 0;
 
     private List<GameObject> m_ListShipSelect = new List<GameObject>();
     public List<GameObject> ListShipSelect
@@ -37,5 +57,21 @@ public class GameManager : Singleton<GameManager>
     {
         get { return m_ShipPlayerTwo; }
         set { m_ShipPlayerTwo = value; }
+    }
+
+    public void PlayerDeath()
+    {
+        m_DeadPlayerCount++;
+
+        if (m_DeadPlayerCount == m_PlayerCount)
+        {
+            m_UI.GameOver();
+        }
+    }
+
+    public void RestartStats()
+    {
+        m_DeadPlayerCount = 0;
+        m_Scores = 0;
     }
 }

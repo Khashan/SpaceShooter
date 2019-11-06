@@ -16,6 +16,9 @@ public class Boss : MonoBehaviour, IDamageable
     }
 
     [SerializeField]
+    private Rigidbody m_RB;
+
+    [SerializeField]
     private GameObject m_BulletPrefab;
     [SerializeField]
     private AudioClip m_AutoAttackAudio;
@@ -44,12 +47,33 @@ public class Boss : MonoBehaviour, IDamageable
     [SerializeField]
     private float m_BulletSpeed = 2f;
 
+    [Header("Moves")]
+    [SerializeField]
+    private float m_Tilt = 10f;
+    [SerializeField]
+    private float m_Dodge = 5f;
+    [SerializeField]
+    private float m_Smoothing = 7.5f;
+    [SerializeField]
+    private Vector2 m_StartWait = new Vector2();
+    [SerializeField]
+    private Vector2 m_ManeuverTime = new Vector2();
+    [SerializeField]
+    private Vector2 m_ManeuverWait = new Vector2();
+
     private bool m_IsGodMode = false;
+    private float m_TargetManeuver;
+
     private int m_CurrentPhase = -1;
 
     private void Awake()
     {
         ChangeBossStage();
+    }
+
+    private void OnEnable()
+    {
+        StartCoroutine(Evade());
     }
 
     private void Update()
@@ -61,6 +85,17 @@ public class Boss : MonoBehaviour, IDamageable
 
         AttackTimer();
     }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
+    private void FixedUpdate()
+    {
+        Evasive();
+    }
+
 
     private void ProtectionTimer()
     {
@@ -160,6 +195,25 @@ public class Boss : MonoBehaviour, IDamageable
     private void Death()
     {
         GameManager.Instance.BossDead = true;
+    }
+
+    private IEnumerator Evade()
+    {
+        yield return new WaitForSeconds(Random.Range(m_StartWait.x, m_StartWait.y));
+        while (true)
+        {
+            m_TargetManeuver = Random.Range(1, m_Dodge) * -Mathf.Sign(transform.position.x);
+            yield return new WaitForSeconds(Random.Range(m_ManeuverTime.x, m_ManeuverTime.y));
+            m_TargetManeuver = 0;
+            yield return new WaitForSeconds(Random.Range(m_ManeuverWait.x, m_ManeuverWait.y));
+        }
+    }
+
+    private void Evasive()
+    {
+        m_RB.rotation = Quaternion.Euler(0, 0, m_RB.velocity.x * -m_Tilt);
+        float newManeuver = Mathf.MoveTowards(m_RB.velocity.x, m_TargetManeuver, m_Smoothing * Time.deltaTime);
+        m_RB.velocity = new Vector3(newManeuver, 0.0f, 0f);
     }
 }
 

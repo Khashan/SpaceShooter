@@ -125,6 +125,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Death()
     {
+        GameManager.Instance.PlayerDeath();
+
         Instantiate(m_ExplosionSFX, transform.position, transform.rotation);
         Destroy(gameObject);
     }

@@ -14,9 +14,9 @@ public class SelectionShip : MonoBehaviour
     }
 
     [SerializeField]
-    private  TextMeshProUGUI m_TextPress;
+    private TextMeshProUGUI m_TextPress;
     [SerializeField]
-    private  TextMeshProUGUI m_TextPress2;
+    private TextMeshProUGUI m_TextPress2;
 
     [SerializeField]
     private List<ShipSocket> m_ShipsStruct = new List<ShipSocket>();
@@ -59,7 +59,7 @@ public class SelectionShip : MonoBehaviour
         m_TextPress.enabled = false;
 
         m_LockedShipIndcator.SetActive(!GameManager.Instance.BossDead);
-        m_LockedShipCollider.enabled = !GameManager.Instance.BossDead;
+        m_LockedShipCollider.enabled = GameManager.Instance.BossDead;
 
         m_Players = GameManager.Instance.PlayerCount;
         m_Camera = Camera.main;
@@ -156,16 +156,12 @@ public class SelectionShip : MonoBehaviour
             if (Input.GetButtonDown(m_CurrentPlayer + "Submit"))
             {
                 GameObject tToutchShip = GetShipSocketPrefabs(m_Hit.transform.gameObject);   // contient se que le raycast touche 
-                
+
                 if (tToutchShip == null)
                 {
-                    
+
                     return;
                 }
-              
-               
-                Debug.Log("FUCK");                    
-                
 
                 m_SelectedShip.Add(tToutchShip);
 
@@ -185,19 +181,18 @@ public class SelectionShip : MonoBehaviour
 
     private void ShowText()
     {
-        if(Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, m_LengthRaycast, LayerMask.GetMask("Ship"))) 
+        if (Physics.Raycast(m_Camera.transform.position, m_Camera.transform.forward, m_LengthRaycast, LayerMask.GetMask("Ship")))
         {
-            if(m_CurrentPlayer == PlayerID.PlayerOne)
+            if (m_CurrentPlayer == PlayerID.PlayerOne)
             {
-                Debug.Log("Hello");
                 m_TextPress.enabled = true;
             }
-            else if(m_CurrentPlayer == PlayerID.PlayerTwo)
+            else if (m_CurrentPlayer == PlayerID.PlayerTwo)
             {
                 m_TextPress.enabled = false;
                 m_TextPress2.enabled = true;
             }
-        }  
+        }
         else
         {
             m_TextPress.enabled = false;
