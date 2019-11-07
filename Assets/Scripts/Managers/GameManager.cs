@@ -12,15 +12,6 @@ public class GameManager : Singleton<GameManager>
     }
 
     private int m_Scores;
-    public int Scores
-    {
-        get { return m_Scores; }
-        set
-        {
-            m_Scores = value;
-            m_UI.UpdateScore(m_Scores);
-        }
-    }
 
     private int m_PlayerCount;
     public int PlayerCount
@@ -73,5 +64,10 @@ public class GameManager : Singleton<GameManager>
     {
         m_DeadPlayerCount = 0;
         m_Scores = 0;
+    }
+
+    public void AddScore(int aScore)
+    {
+        m_Scores += aScore;
     }
 }

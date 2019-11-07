@@ -42,7 +42,7 @@ public class Meteorite : PooledObject, IDamageable
 
     public void DamageReceived(int aDamageReceived)
     {
-        GameManager.Instance.Scores += 10;
+        GameManager.Instance.AddScore(10);
         OnHit();
     }
 

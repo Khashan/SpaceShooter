@@ -118,7 +118,7 @@ public class Enemy : PooledObject, IDamageable
     public void DamageReceived(int aDamageReceived)
     {
         PoolManager.Instance.UseObjectFromPool(m_ExplosionEffect, transform.position, transform.rotation);
-        GameManager.Instance.Scores += 50;
+        GameManager.Instance.AddScore(50);
         gameObject.SetActive(false);
 
     }
