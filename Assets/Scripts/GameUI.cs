@@ -9,10 +9,11 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private GameObject m_GameOverGroup;
     [SerializeField]
+    private GameObject m_BossDiedGroup;
+    [SerializeField]
     private string m_MainMenuSceneName = "MainMenu";
 
     private bool m_GameOver;
-    private int m_Score;
 
     private void Awake()
     {
@@ -23,7 +24,6 @@ public class GameUI : MonoBehaviour
     {
         GameManager.Instance.RestartStats();
         m_GameOver = false;
-        m_Score = 0;
         UpdateScore(0);
     }
 
@@ -35,9 +35,21 @@ public class GameUI : MonoBehaviour
         }
     }
 
+    public void BossDied()
+    {
+        m_BossDiedGroup.SetActive(true);
+        Time.timeScale = 0;
+    }
+
+    public void KeepPlaying()
+    {
+        m_BossDiedGroup.SetActive(false);
+        Time.timeScale = 1;
+    }
+
     public void UpdateScore(int aScore)
     {
-        m_ScoreText.text = "Score: " + m_Score;
+        m_ScoreText.text = "Score: " + aScore;
     }
 
     public void GameOver()
@@ -54,5 +66,6 @@ public class GameUI : MonoBehaviour
     public void ReturnToMainMenu()
     {
         LevelManager.Instance.ChangeLevel(m_MainMenuSceneName, false);
+        Time.timeScale = 1;
     }
 }

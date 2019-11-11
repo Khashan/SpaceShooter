@@ -89,6 +89,7 @@ public class Enemy : PooledObject, IDamageable
         m_Tilt = m_EnemyData.GetTilt();
         m_Dodge = m_EnemyData.GetDodge();
         m_Smoothing = m_EnemyData.GetSmoothing();
+        m_BulletSpeed = m_EnemyData.GetBulletSpeed();
     }
 
     private void FixedUpdate()

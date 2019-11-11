@@ -11,6 +11,13 @@ public class GameManager : Singleton<GameManager>
         set { m_UI = value; }
     }
 
+    private bool m_AllowEnemyToSpawn;
+    public bool AllowEnemyToSpawn
+    {
+        get { return m_AllowEnemyToSpawn; }
+        set { m_AllowEnemyToSpawn = value; }
+    }
+
     private int m_Scores;
 
     private int m_PlayerCount;
@@ -60,8 +67,14 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void BossDied()
+    {
+        m_UI.BossDied();
+    }
+
     public void RestartStats()
     {
+        AllowEnemyToSpawn = true;
         m_DeadPlayerCount = 0;
         m_Scores = 0;
     }
@@ -69,5 +82,6 @@ public class GameManager : Singleton<GameManager>
     public void AddScore(int aScore)
     {
         m_Scores += aScore;
+        m_UI.UpdateScore(m_Scores);
     }
 }

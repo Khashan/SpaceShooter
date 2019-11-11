@@ -44,6 +44,11 @@ public class DangerSpawner : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager.Instance.AllowEnemyToSpawn)
+        {
+            return;
+        }
+
         if (m_AsteroidPrefabs.Count > 0)
         {
             m_CurrentSpawnRate -= Time.deltaTime;

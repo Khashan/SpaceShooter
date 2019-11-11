@@ -5,8 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "ScriptableObject/EnemyData", fileName = "NewEnemyData", order = 1)]
 public class EnemyData : ScriptableObject
 {
+    [Header("Weapon")]
     [SerializeField]
     private float m_FireRate;
+    [SerializeField]
+    private float m_BulletSpeed;
+
+    [Header("Move")]
     [SerializeField]
     private float m_Delay;
     [SerializeField]
@@ -21,6 +26,11 @@ public class EnemyData : ScriptableObject
     public float GetFireRate()
     {
         return m_FireRate;
+    }
+
+    public float GetBulletSpeed()
+    {
+        return m_BulletSpeed;
     }
 
     public float GetDelay()

@@ -10,9 +10,10 @@ public class Boss : MonoBehaviour, IDamageable
     public struct BossPhase
     {
         public string m_NamePhase;
-        public int m_StartPhaseHealth;
+        public BossData m_BossPhaseData;
         public int m_EndPhaseHealth;
         public ScriptableBossAbility m_AbilityCast;
+        public bool m_AllowEnemyToSpawn;
     }
 
     [SerializeField]
@@ -22,38 +23,35 @@ public class Boss : MonoBehaviour, IDamageable
     private GameObject m_BulletPrefab;
     [SerializeField]
     private AudioClip m_AutoAttackAudio;
+    [SerializeField]
+    private AudioClip m_SwitchPhaseSFX;
+
+    [SerializeField]
+    private BossData m_Data;
 
     [SerializeField]
     private List<BossPhase> m_Phases = new List<BossPhase>();
 
-    [SerializeField]
     private float m_ProtectionBetweenPhases = 1.25f;
     private float m_CurrentProtectionTimer = 0f;
 
-    [SerializeField]
     private int m_MaxHealth = 100;
     private int m_CurrentHealth = 0;
 
-    [SerializeField]
     private float m_AttackRate = 0.75f;
     private float m_CurrentAttackTime = 0f;
 
-    [SerializeField]
     private float m_AbilityRate = 3.5f;
     private float m_CurrentAbilityTime = 0;
 
-    [SerializeField]
     private int m_BulletDamage = 1;
-    [SerializeField]
     private float m_BulletSpeed = 2f;
 
-    [Header("Moves")]
-    [SerializeField]
     private float m_Tilt = 10f;
-    [SerializeField]
     private float m_Dodge = 5f;
-    [SerializeField]
     private float m_Smoothing = 7.5f;
+
+    [Header("Moves Paterns")]
     [SerializeField]
     private Vector2 m_StartWait = new Vector2();
     [SerializeField]
@@ -68,7 +66,23 @@ public class Boss : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        InitData();
         ChangeBossStage();
+    }
+
+    private void InitData()
+    {
+        m_MaxHealth = m_Data.MaxHealth;
+        m_CurrentHealth = m_MaxHealth;
+
+        m_Tilt = m_Data.GetTilt();
+        m_Dodge = m_Data.GetDodge();
+        m_Smoothing = m_Data.GetSmoothing();
+        m_BulletSpeed = m_Data.GetBulletSpeed();
+        m_AttackRate = m_Data.GetFireRate();
+
+        m_AbilityRate = m_Data.AbilityRate;
+        m_ProtectionBetweenPhases = m_Data.ProtectionBetweenPhases;
     }
 
     private void OnEnable()
@@ -132,7 +146,7 @@ public class Boss : MonoBehaviour, IDamageable
     private void AutoAttack()
     {
         AudioManager.Instance.PlaySFX(m_AutoAttackAudio, transform.position);
-        Bullets projectile = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab, transform.position, transform.rotation);
+        Bullets projectile = PoolManager.Instance.UseObjectFromPool<Bullets>(m_BulletPrefab, transform.position, Quaternion.identity);
         projectile.BulletInit(m_BulletDamage, m_BulletSpeed);
     }
 
@@ -147,6 +161,8 @@ public class Boss : MonoBehaviour, IDamageable
     {
         m_IsGodMode = true;
 
+        AudioManager.Instance.PlaySFX(m_SwitchPhaseSFX, transform.position);
+
         m_CurrentProtectionTimer = m_ProtectionBetweenPhases;
         m_CurrentAbilityTime = m_AbilityRate;
         m_CurrentAttackTime = m_AttackRate;
@@ -159,7 +175,9 @@ public class Boss : MonoBehaviour, IDamageable
             Debug.LogError("OutOfBounds Boss Phases! Be sure than the last boss phase has the endhealth set lower or equals of 0");
         }
 
-        m_CurrentHealth = m_Phases[m_CurrentPhase].m_StartPhaseHealth;
+        m_Data = m_Phases[m_CurrentPhase].m_BossPhaseData;
+        GameManager.Instance.AllowEnemyToSpawn = m_Phases[m_CurrentPhase].m_AllowEnemyToSpawn;
+        InitData();
     }
 
     public void DamageReceived(int aDamageReceived)
@@ -177,7 +195,6 @@ public class Boss : MonoBehaviour, IDamageable
             else if (m_CurrentHealth <= endPhaseHealth)
             {
                 ChangeBossStage();
-                m_CurrentHealth = m_Phases[m_CurrentPhase].m_StartPhaseHealth;
             }
         }
     }
@@ -194,7 +211,18 @@ public class Boss : MonoBehaviour, IDamageable
 
     private void Death()
     {
-        GameManager.Instance.BossDead = true;
+        //Security if, for some reason, people overcome the damage.
+        if (m_CurrentPhase + 1 < m_Phases.Count)
+        {
+            ChangeBossStage();
+        }
+        else
+        {
+            GameManager.Instance.BossDied();
+            GameManager.Instance.AllowEnemyToSpawn = true;
+            GameManager.Instance.BossDead = true;
+            Destroy(gameObject);
+        }
     }
 
     private IEnumerator Evade()
@@ -213,7 +241,8 @@ public class Boss : MonoBehaviour, IDamageable
     {
         m_RB.rotation = Quaternion.Euler(0, 0, m_RB.velocity.x * -m_Tilt);
         float newManeuver = Mathf.MoveTowards(m_RB.velocity.x, m_TargetManeuver, m_Smoothing * Time.deltaTime);
-        m_RB.velocity = transform.right * newManeuver;
+        float speed = m_Data.GetSpeed() * (newManeuver > 0 ? 1 : -1) * Time.deltaTime;
+        m_RB.velocity = transform.right * newManeuver + (Vector3.right * (newManeuver == 0 ? 0 : speed));
     }
 }
 
