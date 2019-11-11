@@ -118,13 +118,28 @@ public class Enemy : PooledObject, IDamageable
 
     public void DamageReceived(int aDamageReceived)
     {
-        PoolManager.Instance.UseObjectFromPool(m_ExplosionEffect, transform.position, transform.rotation);
         GameManager.Instance.AddScore(50);
-        gameObject.SetActive(false);
+        Death();
+    }
 
+    private void Death()
+    {
+        PoolManager.Instance.UseObjectFromPool(m_ExplosionEffect, transform.position, transform.rotation);
+        gameObject.SetActive(false);
     }
 
     public void HealReceived(int aHealReceived)
     {
+    }
+
+    private void OnCollisionEnter(Collision aCol)
+    {
+        IDamageable player = aCol.transform.GetComponent<IDamageable>();
+
+        if (player != null)
+        {
+            player.DamageReceived(1);
+            Death();
+        }
     }
 }

@@ -13,11 +13,19 @@ public class GameUI : MonoBehaviour
     [SerializeField]
     private string m_MainMenuSceneName = "MainMenu";
 
+    [SerializeField]
+    private GameObject m_PlayerTwoControlsInfo;
+
     private bool m_GameOver;
 
     private void Awake()
     {
         GameManager.Instance.GameUI = this;
+
+        if (GameManager.Instance.PlayerCount == 2)
+        {
+            m_PlayerTwoControlsInfo.SetActive(true);
+        }
     }
 
     private void Start()
