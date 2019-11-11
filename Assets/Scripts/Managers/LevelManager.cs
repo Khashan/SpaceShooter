@@ -84,7 +84,7 @@ public class LevelManager : Singleton<LevelManager>
     private void StartLoading()
     {
         m_SceneLoaded = false;
-        m_LoadingScreen.blocksRaycasts = true;
+        // m_LoadingScreen.blocksRaycasts = true; // Bug with the fading and fade out, will check later. so quick fix
 
         if (m_OnLoadingStarted != null)
         {
